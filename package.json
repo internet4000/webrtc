@@ -5,7 +5,7 @@
   "type": "module",
   "main": "server/index.js",
   "scripts": {
-    "server": "node .",
+    "start": "node .",
     "client": "npx servor client --reload"
   },
   "license": "GPL-3.0-or-later",
