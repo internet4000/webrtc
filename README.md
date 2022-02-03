@@ -1,7 +1,6 @@
 An experiment with webrtc.
 
-To test you need to:
+To play around you need to:
 
-1. Start the node server with `npm run server`
-2. Open the `client` folder in a local web server in two browsers or tabs with `npm run client`
-
+1. `npm run server` which starts the node server
+2. `npm run client` which open the `client` folder in a local web server
