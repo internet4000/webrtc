@@ -6,7 +6,7 @@
   "main": "server/index.js",
   "scripts": {
     "server": "node .",
-    "client": "npx servor src --reload"
+    "client": "npx servor client --reload"
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
