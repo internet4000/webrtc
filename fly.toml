@@ -6,12 +6,23 @@ kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
+[build]
+  # image = "yandeu/geckos.io-example:latest"
+  # builder = heroku/buildpacks:20""
+  builder = "paketobuildpacks/builder:tiny"
+  buildpacks = ["gcr.io/paketo-buildpacks/nodejs"]
+
 [env]
   PORT = "9208"
 
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
 
 [[services]]
   internal_port = 9208
@@ -23,7 +34,7 @@ processes = []
 
 [[services]]
   http_checks = []
-  internal_port = 8080
+  internal_port = 3000
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
