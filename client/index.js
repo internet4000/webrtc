@@ -8,7 +8,9 @@ socket.addEventListener('open', function (event) {
 
 // Listen for messages
 socket.addEventListener('message', function (event) {
-	console.log('Message from server ', event.data)
+	console.log('Message from server: ', event.data)
+	// const msg = JSON.parse(event.data)
+	// console.log(msg)
 })
 
 document.querySelector('form').addEventListener('submit', sendMessage)
