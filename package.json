@@ -6,6 +6,7 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node .",
+    "dev": "npx nodemon .",
     "client": "npx servor client --reload"
   },
   "license": "GPL-3.0-or-later",

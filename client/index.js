@@ -1,23 +1,25 @@
 // Create WebSocket connection.
-const socket = new WebSocket('ws://localhost:8080');
+const socket = new WebSocket('ws://localhost:8080')
 
 // Connection opened
 socket.addEventListener('open', function (event) {
-    socket.send('Hello Server, sent from client!');
-});
+	socket.send('Hello Server, sent from client!')
+})
 
 // Listen for messages
 socket.addEventListener('message', function (event) {
-    console.log('Message from server ', event.data);
-});
+	console.log('Message from server ', event.data)
+})
 
-document.querySelector('form').addEventListener('submit', (event) => {
+document.querySelector('form').addEventListener('submit', sendMessage)
+
+function sendMessage(event) {
 	event.preventDefault()
 	const data = new FormData(event.target)
 	const msg = data.get('message')
 	console.log('sending message', msg)
-	channel.emit('chat message', msg)
-})
+	socket.send(msg)
+}
 
 function appendMessage(msg) {
 	const list = document.querySelector('#list')
