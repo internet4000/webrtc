@@ -1,34 +1,15 @@
-// window.geckos
-// import { geckos } from '@geckos.io/server'
+// Create WebSocket connection.
+const socket = new WebSocket('ws://localhost:8080');
 
-console.log('hello')
-const channel = geckos({
-	// url: 'http://127.0.0.1',
-	port: 9208,
-	// iceServers: geckos.iceServers,
-})
+// Connection opened
+socket.addEventListener('open', function (event) {
+    socket.send('Hello Server, sent from client!');
+});
 
-channel.onConnect((error) => {
-	if (error) {
-		console.error(error.message)
-		return
-	}
-	console.log('connected')
-	appendMessage('connected')
-
-	channel.onDisconnect((what) => {
-		console.log('disconnected')
-		appendMessage('disconnected')
-	})
-
-	channel.on('chat message', (data) => {
-		console.log(`You got the message`, data)
-		appendMessage(data)
-	})
-
-	channel.emit('chat message', `Hello I am ${channel.id}`)
-	// channel.close()
-})
+// Listen for messages
+socket.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+});
 
 document.querySelector('form').addEventListener('submit', (event) => {
 	event.preventDefault()

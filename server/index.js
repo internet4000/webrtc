@@ -1,20 +1,21 @@
-import geckos from '@geckos.io/server'
+import WebSocket, {WebSocketServer} from 'ws'
 
-const io = geckos()
+// const ws = new WebSocket('ws://www.host.com/path')
 
-io.listen(9208) // default port is 9208
+// ws.on('open', function open() {
+// 	ws.send('something')
+// })
 
-io.onConnection(channel => {
-  channel.onDisconnect(() => {
-    console.log(`${channel.id} got disconnected`)
-  })
+// ws.on('message', function message(data) {
+// 	console.log('received: %s', data)
+// })
 
-  channel.emit('chat message', `Welcome ${channel.id}`)
+const wss = new WebSocketServer({ port: 8080 });
 
-  channel.on('chat message', data => {
-    console.log(`got ${data} from "chat message"`)
-    // emit the "chat message" data to all channels in the same room
-    // io.room(channel.roomId).emit('chat message', data)
-    channel.room.emit('chat message', data)
-  })
-})
+wss.on('connection', function connection(ws) {
+  ws.on('message', function message(data) {
+    console.log('received: %s', data);
+  });
+
+  ws.send('hello from server');
+});
