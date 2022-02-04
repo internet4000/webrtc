@@ -5,14 +5,23 @@
   </head>
   <body>
 
-    <form>
-      <textarea name="message"></textarea><br>
+    <form id="websockets">
+      <label>Send via WebSockets
+      <textarea name="message"></textarea>
+      </label></br>
       <button type="submit">Send</button>
     </form>
 
     <p>
       <button id="connect">Connect</button>
     </p>
+
+    <form id="webrtc">
+      <label>Send via WebRTC
+      <textarea name="message"></textarea>
+      </label></br>
+      <button type="submit">Send</button>
+    </form>
 
     <ul id="list"></ul>
 

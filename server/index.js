@@ -8,21 +8,18 @@ wss.on('connection', function connection(ws) {
 
 	ws.on('message', function message(data, isBinary) {
 		console.log('received: %s', data)
+		console.log(wss.clients.size)
 		// if (typeof data === 'string') return
 		// let parsed = data
 		try {
 			let parsed = JSON.parse(data)
 			console.log(parsed)
-			if (parsed.type === 'offer') {
+			if (parsed.type === 'offer' || parsed.type === 'answer' || parsed.type === 'candidate') {
 				for (let client of wss.clients) {
-					if (/*client !== ws && */client.readyState === WebSocket.OPEN) {
+					if (client !== ws && client.readyState === WebSocket.OPEN) {
 						client.send(data)
 					}
 				}
-				
-			}
-			if (parsed.type === 'answer') {
-				// what now
 			}
 		} catch (err) {
 			// console.error(err)
@@ -32,4 +29,3 @@ wss.on('connection', function connection(ws) {
 
 	ws.send('hello from server')
 })
-
