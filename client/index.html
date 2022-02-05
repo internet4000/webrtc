@@ -6,32 +6,42 @@
 		<style>
 			main {
 				display: grid;
-				grid-template-columns: 1fr 1fr;
-				grid-row: auto auto;
+				grid-template-columns: 1fr 1fr 1fr;
+				grid-row: auto;
 				gap: 1em;
+				min-height: 95vh;
+				place-content: center;
+			}
+			@media (max-width: 30em) {
+				main {
+					display: flex;
+					flex-flow: column nowrap;
+				}
 			}
 			main > * {
 				width: 100%;
 				margin: 0;
+				text-align: center;
 			}
 		</style>
 	</head>
 	<body>
 		<main>
 			<p>
-				Create a WebRTC offer and find it in the dev console<br />
+				Open a WebRTC connection by creating an "offer".<br />
+				Find it in the browser console.<br />
 				<button id="connect">Connect</button>
 			</p>
 			<form id="webrtc-offer">
 				<label
-					>Paste in an encoded "offer" or "answer" from another peer<br />
+					>Paste in an encoded "offer" or "answer" from another peer:<br />
 					<textarea required name="message"></textarea></label
 				><br />
 				<button type="submit">Accept</button>
 			</form>
 			<form id="webrtc">
 				<label
-					>Send via WebRTC<br />
+					>Send via WebRTC:<br />
 					<textarea required name="message"></textarea></label
 				><br />
 				<button type="submit">Send</button>
