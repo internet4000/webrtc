@@ -1,86 +1,46 @@
-// Create a WebRTC connection
-const config = {iceServes: [{urls: 'stun:stun.l.google.com:19302'}]}
-const peer = new RTCPeerConnection(config)
+function peerConnection() {
+	// Create a WebRTC connection
+	const config = {iceServes: [{urls: 'stun:stun.l.google.com:19302'}]}
+	const peer = new RTCPeerConnection(config)
 
-window.peer = peer
-
-// Attach a data channel for later.
-const dataChannel = peer.createDataChannel('main')
-function handleChannel(channel) {
-	channel.onopen = async function (event) {
-		console.log('data channel open', channel.readyState)
-	}
-	channel.onclose = async function (event) {
-		console.log('data channel close', event)
-	}
-	channel.onmessage = async function (event) {
-		console.log('data channel message')
-		console.log(decode(event.data))
-	}
-}
-
-// Listen for events on the webrtc peer.
-peer.onconnectionstatechange = function (event) {
-	console.log('peer ocnnection state change', event)
-	if (peer.connectionState === 'connected') {
-		console.log('peers connected!!')
-	}
-}
-peer.onicecandidate = async function (event) {
-	const state = event.target.iceGatheringState
-	console.log('onicecandidate', state)
-	if (event.target.iceGatheringState == 'complete') {
-		const offer = await peer.createOffer()
-		console.log('Created new offer with ICE candidates')
-		console.log(encode(offer))
-	}
-}
-peer.oniceconnectionstatechange = function (event) {
-	console.log('ICE connection state change' + event.target.iceConnectionState)
-}
-peer.ondatachannel = function ({channel}) {
-	console.log('ondatachannel', channel)
-	handleChannel(channel)
-}
-
-// Create WebSocket connection
-function setupWebSockets() {
-	const host = 'localhost'
-	const socket = new WebSocket(`ws://${host}:8080`)
-	socket.addEventListener('error', function error(err) {
-		document.querySelector('form#websockets button').disabled = true
-		console.error(err)
-	})
-	socket.addEventListener('open', function (event) {
-		document.querySelector('form#websockets button').disabled = false
-		socket.send('Hello Server, sent from client!')
-	})
-	socket.addEventListener('message', async function (event) {
-		console.log('Message from socket server: ', event.data)
-		if (event.data instanceof Blob) {
-			const msg = processBlob(event.data)
-			console.log(msg.type, msg)
-			if (msg.type === 'candidate') {
-				try {
-					console.log('adding candidate to peer')
-					peer.addIceCandidate(msg.candiate)
-				} catch (err) {
-					console.error('Error adding ice candidate')
-				}
-			}
+	// Listen for events on the webrtc peer.
+	peer.onconnectionstatechange = function (event) {
+		console.log('peer ocnnection state change', event)
+		if (peer.connectionState === 'connected') {
+			console.log('peers connected!!')
 		}
-	})
-	return socket
+	}
+	peer.onicecandidate = async function (event) {
+		const state = event.target.iceGatheringState
+		console.log('onicecandidate', state)
+		if (event.target.iceGatheringState == 'complete') {
+			const offer = await peer.createOffer()
+			console.log('updated offer with ICE candidates', encode(offer))
+		}
+	}
+	peer.oniceconnectionstatechange = function (event) {
+		console.log('ICE connection state change' + event.target.iceConnectionState)
+	}
+	peer.ondatachannel = function ({channel}) {
+		console.log('ondatachannel', channel)
+		channel.onopen = async function () {
+			console.log('data channel open', dataChannel.readyState)
+		}
+		channel.onclose = async function (event) {
+			console.log('data channel close', event)
+		}
+		channel.onmessage = async function (event) {
+			console.log('data channel message', decode(event.data))
+		}
+	}
+	peer.onmessage = function (event) {
+		console.log(event)
+	}
+	return peer
 }
 
-// Form to send message via websockets.
-document.querySelector('form#websockets').addEventListener('submit', (event) => {
-	event.preventDefault()
-	const data = new FormData(event.target)
-	const msg = data.get('message')
-	console.log('sending via socket', msg)
-	socket.send(msg)
-})
+const peer = peerConnection()
+const dataChannel = peer.createDataChannel('main')
 
 // Form to send message via WebRTC.
 document.querySelector('form#webrtc').addEventListener('submit', (event) => {
@@ -96,7 +56,6 @@ document.querySelector('form#webrtc-offer').addEventListener('submit', async (ev
 	const data = new FormData(event.target)
 	const msg = decode(data.get('message'))
 	console.log(msg)
-	const type = msg.type
 	if (msg.type === 'offer') {
 		const desc = new RTCSessionDescription(msg)
 		peer.setRemoteDescription(desc)
@@ -127,12 +86,5 @@ document.querySelector('button#connect').addEventListener('click', async () => {
 })
 
 // Helpers
-function processBlob(blob) {
-	const promise = new Promise()
-	const reader = new FileReader()
-	reader.addEventListener('load', () => resolve(reader.result))
-	reader.readAsText(blob)
-	return promise
-}
 const encode = (data) => btoa(JSON.stringify(data))
 const decode = (data) => JSON.parse(atob(data))

@@ -25,25 +25,24 @@
 			<form id="webrtc-offer">
 				<label
 					>Paste in an encoded "offer" or "answer" from another peer<br />
-					<textarea name="message"></textarea></label
+					<textarea required name="message"></textarea></label
 				><br />
 				<button type="submit">Accept</button>
 			</form>
-
 			<form id="webrtc">
 				<label
 					>Send via WebRTC<br />
-					<textarea name="message"></textarea></label
+					<textarea required name="message"></textarea></label
 				><br />
 				<button type="submit">Send</button>
 			</form>
-			<form id="websockets">
+			<!-- <form id="websockets">
 				<label
 					>Send via WebSockets<br />
-					<textarea name="message"></textarea></label
+					<textarea required name="message"></textarea></label
 				><br />
 				<button type="submit">Send</button>
-			</form>
+			</form> -->
 		</main>
 
 		<script src="index.js" type="module" async></script>
