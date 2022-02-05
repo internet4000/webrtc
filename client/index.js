@@ -10,21 +10,21 @@ function peerConnection() {
 			console.log('peers connected!!')
 		}
 	}
+	peer.oniceconnectionstatechange = function (event) {
+		console.log('ICE connection state change' + event.target.iceConnectionState)
+	}
 	peer.onicecandidate = async function (event) {
 		const state = event.target.iceGatheringState
 		console.log('onicecandidate', state)
 		if (event.target.iceGatheringState == 'complete') {
 			const offer = await peer.createOffer()
-			console.log('updated offer with ICE candidates', encode(offer))
+			console.log('offer (with ICE candidates)', encode(offer))
 		}
-	}
-	peer.oniceconnectionstatechange = function (event) {
-		console.log('ICE connection state change' + event.target.iceConnectionState)
 	}
 	peer.ondatachannel = function ({channel}) {
 		console.log('ondatachannel', channel)
 		channel.onopen = async function () {
-			console.log('data channel open', dataChannel.readyState)
+			console.log('data channel open', channel.readyState)
 		}
 		channel.onclose = async function (event) {
 			console.log('data channel close', event)
@@ -59,30 +59,24 @@ document.querySelector('form#webrtc-offer').addEventListener('submit', async (ev
 	if (msg.type === 'offer') {
 		const desc = new RTCSessionDescription(msg)
 		peer.setRemoteDescription(desc)
+		console.log('accepted offer')
 		const answer = await peer.createAnswer()
 		await peer.setLocalDescription(answer)
-		console.log('accepted offer, here is the answer', encode(answer))
+		console.log('answer', encode(answer))
 	}
-
 	if (msg.type === 'answer') {
 		const desc = new RTCSessionDescription(msg)
 		await peer.setRemoteDescription(desc)
 		console.log('accepted answer')
 	}
-
-	if (msg.type === 'candidate') {
-		console.log('received candidate, adding to local peer', msg.candidate)
-		peer.addIceCandidate(msg.candidate)
-		// socket.send(JSON.stringify({type: 'candidate', candidate}))
-	}
 })
 
 // Button that creates an offer and sends it
-document.querySelector('button#connect').addEventListener('click', async () => {
+document.querySelector('button#connect').addEventListener('click', async (event) => {
 	const offer = await peer.createOffer()
 	await peer.setLocalDescription(offer)
-	console.log('creating offer', encode(offer))
-	// socket.send(JSON.stringify(offer))
+	console.log('offer', encode(offer))
+	event.target.disabled = true
 })
 
 // Helpers
