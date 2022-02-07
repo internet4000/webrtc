@@ -19,5 +19,7 @@
 
 ### Good resources
 
+- https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity
 - https://hpbn.co/webrtc/
 - https://codelabs.developers.google.com/codelabs/webrtc-web/#0
+- https://github.com/pradt2/always-online-stun
